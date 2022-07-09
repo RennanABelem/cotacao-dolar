@@ -1,12 +1,14 @@
 package com.api.moedas.moeda.service.impl;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +26,20 @@ public class CotacaoServiceImplTest {
 	@InjectMocks
 	private CotacaoServiceImpl service = new CotacaoServiceImpl();
 	
+	@Value("${url_cotacao_dolar}")
+	String urlCotacaoDolar;
+	
+	@BeforeEach
+	public void before() {
+		service.urlCotacaoDolar = urlCotacaoDolar;
+	}
+	
 	@Test
 	public void givenMockingIsDoneByMockito_whenGetIsCalled_shouldReturnMockedObject() {
 		
 		ResponseUSDBRL response = new ResponseUSDBRL();
-		
-		Mockito.when(restTemplate.getForEntity("https://economia.awesomeapi.com.br/json/last/USD-BRL", ResponseUSDBRL.class))
+
+		Mockito.when(restTemplate.getForEntity(urlCotacaoDolar, ResponseUSDBRL.class))
 		.thenReturn(new ResponseEntity<ResponseUSDBRL>(response, HttpStatus.CREATED));
 		
 		ResponseUSDBRL resp = service.buscaCotacao();
